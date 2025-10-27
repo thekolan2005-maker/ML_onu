@@ -9,7 +9,7 @@ file_path = 'train.csv'
 
 try:
     df = pd.read_csv(file_path)
-    print("✅ Данные 'Space Titanic' успешно загружены!")
+    print(" Данные 'Space Titanic' успешно загружены!")
     print("-" * 40)
 
     numerical_features = ['Age', 'RoomService', 'FoodCourt', 'ShoppingMall', 'Spa', 'VRDeck']
@@ -47,7 +47,7 @@ try:
             mode_val = df[col].mode()[0]
             df[col].fillna(mode_val, inplace=True)
 
-    print("✅ Пропущенные значения заполнены медианой/модой.")
+    print("Пропущенные значения заполнены медианой/модой.")
     print("-" * 40)
 
 
@@ -69,7 +69,7 @@ try:
 
     df_processed['Transported'] = target.values
 
-    print("✅ Датасет успешно нормализован и закодирован!")
+    print("Датасет успешно нормализован и закодирован!")
     print("\nВид итогового датасета (первые 5 строк):")
     print(df_processed.head())
 
