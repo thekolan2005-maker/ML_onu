@@ -9,7 +9,7 @@ file_path = 'train.csv'
 
 try:
     df = pd.read_csv(file_path)
-    print(" Данные 'Space Titanic' успешно загружены!")
+    print(" Данные успешно загружены!")
     print("-" * 40)
 
     numerical_features = ['Age', 'RoomService', 'FoodCourt', 'ShoppingMall', 'Spa', 'VRDeck']
