@@ -1,61 +1,91 @@
 import pandas as pd
-import os # Импортируем модуль os для работы с файловой системой
+import os
+from sklearn.preprocessing import MinMaxScaler, StandardScaler
 
-
-file_path = 'train.csv'
-output_dir = r'B:\RFKT\result'  # Целевая папка для сохранения
+# === Настройки ===
+file_path = 'train.csv'  # путь к исходному файлу
+output_dir = r'B:\\RFKT\\result'
 output_file_name = 'train_normalized.csv'
 output_path = os.path.join(output_dir, output_file_name)
 
+# Метод нормализации: "minmax" или "zscore"
+scaling_method = "minmax"
 
 try:
+    # === Загрузка данных ===
     df = pd.read_csv(file_path)
     print("Данные 'Space Titanic' успешно загружены!")
     print("-" * 40)
 
+    # === Проверка пропусков ===
     print("Количество пропущенных значений (до заполнения):")
     missing_values = df.isnull().sum()
     print(missing_values[missing_values > 0])
     print("-" * 40)
 
-    # Заполнение пропусков
-    median_age = df['Age'].median()
-    print(f"-> Медиана для столбца 'Age': {median_age:.2f}")
-    df['Age'].fillna(median_age, inplace=True)
-    print("   Столбец 'Age' заполнен медианой.")
+    # === Заполнение пропусков ===
+    numeric_cols = df.select_dtypes(include=['int64', 'float64']).columns
+    categorical_cols = df.select_dtypes(exclude=['int64', 'float64']).columns
 
-    mode_home_planet = df['HomePlanet'].mode()[0]
-    print(f"-> Мода (самое частое значение) для столбца 'HomePlanet': {mode_home_planet}")
-    df['HomePlanet'].fillna(mode_home_planet, inplace=True)
-    print("   Столбец 'HomePlanet' заполнен модой.")
+    # Числовые — средним
+    for col in numeric_cols:
+        mean_value = df[col].mean()
+        df[col].fillna(mean_value, inplace=True)
+        print(f"-> Числовая колонка '{col}' заполнена средним: {mean_value:.2f}")
 
-    mode_Spa = df['Spa'].mode()[0]
-    print(f"-> Мода для столбца 'Spa': {mode_Spa}")
-    df['Spa'].fillna(mode_Spa, inplace=True)
-    print(" Столбец 'Spa' заполнен модой")
-
-    mode_destination = df['Destination'].mode()[0]
-    print(f"-> Мода (самое частое значение) для столбца 'Destination': {mode_destination}")
-    df['Destination'].fillna(mode_destination, inplace=True)
-    print("   Столбец 'Destination' заполнен модой.")
+    # Категориальные — модой, безопасно
+    for col in categorical_cols:
+        mode_value = df[col].mode()[0]
+        df[col] = df[col].fillna(mode_value)
+        df[col] = df[col].infer_objects(copy=False)
+        print(f"-> Категориальная колонка '{col}' заполнена модой: {mode_value}")
 
     print("-" * 40)
-
-    print("Количество пропущенных значений (ПОСЛЕ заполнения):")
-    missing_values_after = df.isnull().sum()
-    # Выводим только столбцы, которые мы заполняли
-    print(missing_values_after[['Age', 'HomePlanet', 'Destination', 'Spa']])
+    print("Количество пропущенных значений (после заполнения):")
+    print(df.isnull().sum()[df.isnull().sum() > 0])
     print("-" * 40)
 
 
 
-    # Создание целевой папки, если она не существует
+    # === Нормализация числовых данных ===
+    numeric_cols = df.select_dtypes(include=['int64', 'float64']).columns.tolist()
+    print(f"Числовые колонки для нормализации: {numeric_cols}")
+
+    if scaling_method == "minmax":
+        scaler = MinMaxScaler()
+        print("Применяется Min-Max нормализация...")
+    else:
+        scaler = StandardScaler()
+        print("Применяется Z-score нормализация...")
+
+    df[numeric_cols] = scaler.fit_transform(df[numeric_cols])
+    print("Нормализация завершена.")
+    print("-" * 40)
+
+    # === Преобразование только колонки HomePlanet ===
+    if 'HomePlanet' in df.columns:
+        print("Преобразуем колонку 'HomePlanet'")
+        df = pd.get_dummies(df, columns=['HomePlanet'], drop_first=True)
+        print("Колонка 'HomePlanet' успешно преобразована.")
+    else:
+        print("Колонка 'HomePlanet' не найдена, пропускаем преобразование.")
+    print("-" * 40)
+
+
+    # === Удаляем ненужные колонки ===
+    for col in ['ShoppingMall', 'FoodCourt', 'Transported']:
+        if col in df.columns:
+            df.drop(columns=col, inplace=True)
+            print(f"Колонка '{col}' удалена из итоговой таблицы.")
+    print("-" * 40)
+
+
+    # === Сохранение ===
     os.makedirs(output_dir, exist_ok=True)
-    print(f"Целевая папка '{output_dir}' проверена/создана.")
     df.to_csv(output_path, index=False)
-    print(f"Нормализованный файл успешно сохранен: {output_path}")
-
+    print(f"Файл успешно сохранён: {output_path}")
 
 except FileNotFoundError:
-    print(f" Ошибка: Файл '{file_path}' не найден!")
-    print("Проверьте, правильно ли указан путь к train.csv.")
+    print(f"Ошибка: файл '{file_path}' не найден!")
+except Exception as e:
+    print("Произошла ошибка:", e)
