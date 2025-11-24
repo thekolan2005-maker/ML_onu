@@ -17,6 +17,21 @@ try:
     print("Данные 'Space Titanic' успешно загружены!")
     print("-" * 40)
 
+
+
+
+    # === Удаляем ненужные колонки ===
+    for col in ['ShoppingMall', 'FoodCourt', 'Transported', 'CryoSleep','VIP','VRDeck','RoomService']:
+        if col in df.columns:
+            df.drop(columns=col, inplace=True)
+            print(f"Колонка '{col}' удалена из итоговой таблицы.")
+    print("-" * 40)
+
+    print("Информация о датасете (df.info()):")
+    df.info()
+    print("-" * 40)
+
+
     # === Проверка пропусков ===
     print("Количество пропущенных значений (до заполнения):")
     missing_values = df.isnull().sum()
@@ -65,20 +80,11 @@ try:
     # === Преобразование только колонки HomePlanet ===
     if 'HomePlanet' in df.columns:
         print("Преобразуем колонку 'HomePlanet'")
-        df = pd.get_dummies(df, columns=['HomePlanet'], drop_first=True)
+        df = pd.get_dummies(df, columns=['HomePlanet'], drop_first=0)
         print("Колонка 'HomePlanet' успешно преобразована.")
     else:
         print("Колонка 'HomePlanet' не найдена, пропускаем преобразование.")
     print("-" * 40)
-
-
-    # === Удаляем ненужные колонки ===
-    for col in ['ShoppingMall', 'FoodCourt', 'Transported']:
-        if col in df.columns:
-            df.drop(columns=col, inplace=True)
-            print(f"Колонка '{col}' удалена из итоговой таблицы.")
-    print("-" * 40)
-
 
     # === Сохранение ===
     os.makedirs(output_dir, exist_ok=True)
