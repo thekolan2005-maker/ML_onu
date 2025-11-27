@@ -11,7 +11,7 @@ import seaborn as sns # Делает картинки красивыми, что
 
 
 # Загружаем нашу волшебную табличку. Она лежит где-то тут...
-df = pd.read_csv("../train_normalized.csv")
+df = pd.read_csv("student-mat-normalization.csv")
 
 # Смотрим на первые строчки, чтобы понять, что мы вообще загрузили.
 print("Голова 10")

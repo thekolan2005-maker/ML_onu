@@ -6,6 +6,8 @@
   <component name="ChangeListManager">
     <list default="true" id="1798a4d5-37b2-41fd-a33a-df929367e031" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.venv/normalizationOhyeinshon.py" beforeDir="false" afterPath="$PROJECT_DIR$/.venv/normalizationOhyeinshon.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/student-mat-normalization.csv" beforeDir="false" afterPath="$PROJECT_DIR$/student-mat-normalization.csv" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -45,6 +47,7 @@
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
     "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "Python.lomation_filetion.executor": "Run",
     "Python.normalizationOhyeinshon.executor": "Run",
     "Python.warm up.executor": "Run",
     "RunOnceActivity.ShowReadmeOnStart": "true",
@@ -78,5 +81,16 @@
       <updated>1762713327553</updated>
     </task>
     <servers />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/.venv/lomation_filetion.py</url>
+          <line>4</line>
+          <option name="timeStamp" value="1" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
   </component>
 </project>

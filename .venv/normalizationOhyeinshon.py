@@ -48,7 +48,7 @@ try:
     print("-" * 40)
 
     # === Удаляем ненужные колонки ===
-    for col in ['school','Medu','Fedu','traveltime','famsup','Dalc','absences']:
+    for col in ['','','','','','','']:
         if col in df.columns:
             df.drop(columns=col, inplace=True)
             print(f"Колонка '{col}' удалена из итоговой таблицы.")
@@ -64,34 +64,34 @@ try:
     missing_values = df.isnull().sum()
     print(missing_values[missing_values > 0])
     print("-" * 40)
-
-    # === Заполнение пропусков ===
-
-    numeric_cols = df.select_dtypes(include=['int64', 'float64']).columns
-    categorical_cols = df.select_dtypes(exclude=['int64', 'float64']).columns
-
-    for col in numeric_cols:
-        if fill_method == "median":
-            fill_value = df[col].median()
-            method_text = "медианой"
-        else:  # mean
-            fill_value = df[col].mean()
-            method_text = "средним"
-
-        df[col].fillna(fill_value, inplace=True)
-        print(f"-> Числовая колонка '{col}' заполнена {method_text}: {fill_value:.2f}")
-
-    # Категориальные — модой, безопасно
-    for col in categorical_cols:
-        mode_value = df[col].mode()[0]
-        df[col] = df[col].fillna(mode_value)
-        df[col] = df[col].infer_objects(copy=False)
-        print(f"-> Категориальная колонка '{col}' заполнена модой: {mode_value}")
-
-    print("-" * 40)
-    print("Количество пропущенных значений (после заполнения):")
-    print(df.isnull().sum()[df.isnull().sum() > 0])
-    print("-" * 40)
+    #
+    # # === Заполнение пропусков ===
+    #
+    # numeric_cols = df.select_dtypes(include=['int64', 'float64']).columns
+    # categorical_cols = df.select_dtypes(exclude=['int64', 'float64']).columns
+    #
+    # for col in numeric_cols:
+    #     if fill_method == "median":
+    #         fill_value = df[col].median()
+    #         method_text = "медианой"
+    #     else:  # mean
+    #         fill_value = df[col].mean()
+    #         method_text = "средним"
+    #
+    #     df[col].fillna(fill_value, inplace=True)
+    #     print(f"-> Числовая колонка '{col}' заполнена {method_text}: {fill_value:.2f}")
+    #
+    # # Категориальные — модой, безопасно
+    # for col in categorical_cols:
+    #     mode_value = df[col].mode()[0]
+    #     df[col] = df[col].fillna(mode_value)
+    #     df[col] = df[col].infer_objects(copy=False)
+    #     print(f"-> Категориальная колонка '{col}' заполнена модой: {mode_value}")
+    #
+    # print("-" * 40)
+    # print("Количество пропущенных значений (после заполнения):")
+    # print(df.isnull().sum()[df.isnull().sum() > 0])
+    # print("-" * 40)
 
 
 
@@ -105,14 +105,24 @@ try:
     print("Нормализация завершена.")
     print("-" * 40)
 
-    # === Преобразование только колонки HomePlanet ===
-    if 'HomePlanet' in df.columns:
-        print("Преобразуем колонку 'HomePlanet'")
-        df = pd.get_dummies(df, columns=['HomePlanet'], drop_first=0)
-        print("Колонка 'HomePlanet' успешно преобразована.")
-    else:
-        print("Колонка 'HomePlanet' не найдена, пропускаем преобразование.")
-    print("-" * 40)
+    # 1. Определите список колонок, которые вы хотите преобразовать
+    # Вы можете менять этот список вручную, чтобы выбрать нужные колонки.
+    columns_to_encode = df.select_dtypes(include=['object']).columns.tolist()
+
+    print("--- Начинаем выборочное One-Hot кодирование ---")
+
+    # 2. Итерация по списку и преобразование каждой колонки
+    for col in columns_to_encode:
+        if col in df.columns:
+            print(f" Преобразуем колонку: '{col}'")
+            # Выполняем One-Hot Encoding
+            # drop_first=0 (False) оставляет все созданные фиктивные переменные
+            df = pd.get_dummies(df, columns=[col], drop_first=0)
+            print(f"   Колонка '{col}' успешно преобразована.")
+        else:
+            print(f"⚠ Колонка '{col}' не найдена в датафрейме. Пропускаем преобразование.")
+
+    print("--- Кодирование завершено ---")
 
     # === Сохранение ===
     os.makedirs(output_dir, exist_ok=True)
