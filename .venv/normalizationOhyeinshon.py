@@ -48,7 +48,7 @@ try:
     print("-" * 40)
 
     # === Удаляем ненужные колонки ===
-    for col in ['','','','','','','']:
+    for col in ['school','address','famsize','Medu','Fedu','Mjob','Fjob','traveltime','internet','reason']:
         if col in df.columns:
             df.drop(columns=col, inplace=True)
             print(f"Колонка '{col}' удалена из итоговой таблицы.")
@@ -97,8 +97,12 @@ try:
 
     # === Нормализация числовых данных ===
     numeric_cols = df.select_dtypes(include=['int64', 'float64']).columns.tolist()
-    print(f"Числовые колонки для нормализации: {numeric_cols}")
 
+    # 2. ИСКЛЮЧЕНИЕ: Убираем 'Walc' из списка для нормализации
+   # COLS_TO_EXCLUDE_FROM_SCALING = ['Dalc','Walc','failures','famrel','freetime','goout','health', 'absences', 'G1', 'G2', 'G3','studytime']
+    cols_to_scale = [col for col in numeric_cols if col not in COLS_TO_EXCLUDE_FROM_SCALING]
+
+    print(f"Числовые колонки для нормализации: {cols_to_scale}")
 
     scaler = MinMaxScaler()
     df[numeric_cols] = scaler.fit_transform(df[numeric_cols])
@@ -120,7 +124,7 @@ try:
             df = pd.get_dummies(df, columns=[col], drop_first=0)
             print(f"   Колонка '{col}' успешно преобразована.")
         else:
-            print(f"⚠ Колонка '{col}' не найдена в датафрейме. Пропускаем преобразование.")
+            print(f"Колонка '{col}' не найдена в датафрейме. Пропускаем преобразование.")
 
     print("--- Кодирование завершено ---")
 
